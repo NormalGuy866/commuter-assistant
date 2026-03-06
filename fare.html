@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fare Calculator | Commuter Assistant</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* Additional styles specific to fare calculator */
+        .fare-matrix {
+            margin-top: 3rem;
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .fare-matrix h3 {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: #2c3e50;
+        }
+
+        .line-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .line-tab {
+            padding: 0.8rem 1.5rem;
+            background: #f0f0f0;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .line-tab:hover {
+            background: #e0e0e0;
+        }
+
+        .line-tab.active {
+            background: #3498db;
+            color: white;
+        }
+
+        .fare-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .fare-table th,
+        .fare-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .fare-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .fare-table tr:hover {
+            background: #f5f5f5;
+        }
+
+        .fare-note {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #e8f4f8;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            color: #2c3e50;
+        }
+
+        .recent-searches {
+            margin-top: 2rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+
+        .recent-search-item {
+            padding: 0.5rem;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .recent-search-item:hover {
+            background: #e8f4f8;
+        }
+
+        .recent-search-item:last-child {
+            border-bottom: none;
+        }
+
+        .fare-breakdown {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 5px;
+            margin-top: 1rem;
+        }
+
+        .fare-breakdown p {
+            margin: 0.5rem 0;
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px dashed #ddd;
+            padding-bottom: 0.5rem;
+        }
+
+        .fare-breakdown .total {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #27ae60;
+            border-bottom: 2px solid #27ae60;
+            margin-top: 1rem;
+            padding-top: 0.5rem;
+        }
+
+        .beep-card-tip {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 5px;
+        }
+
+        .beep-card-tip h4 {
+            color: #856404;
+            margin-bottom: 0.5rem;
+        }
+
+        .beep-card-tip ul {
+            margin-left: 1.5rem;
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="container">
+                <h1 class="logo">🚆 Commuter<span>Assistant</span></h1>
+                <ul class="nav-menu">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="fare.html" class="active">Fare Calculator</a></li>
+                    <li><a href="stations.html">Stations</a></li>
+                    <li><a href="guides.html">Guides</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero" style="padding: 2rem 0;">
+            <div class="container">
+                <h2>💰 Fare Calculator</h2>
+                <p>Know exactly how much to pay before you ride. Never be short on fare again.</p>
+            </div>
+        </section>
+
+        <section class="quick-planner" style="background: #f5f5f5;">
+            <div class="container">
+                <div class="planner-box">
+                    <h3 style="text-align: center; margin-bottom: 1.5rem;">Calculate Your Fare</h3>
+                    
+                    <form id="fare-form">
+                        <div class="form-group">
+                            <label for="line-select">Select Line:</label>
+                            <select id="line-select" required>
+                                <option value="">Choose a line</option>
+                                <option value="mrt3">MRT-3</option>
+                                <option value="lrt1">LRT-1</option>
+                                <option value="lrt2">LRT-2</option>
+                                <option value="edsacarousel">EDSA Carousel</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="fare-from">From:</label>
+                            <select id="fare-from" required disabled>
+                                <option value="">First select a line</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="fare-to">To:</label>
+                            <select id="fare-to" required disabled>
+                                <option value="">First select a line</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn-primary" id="calculate-btn" disabled>Calculate Fare</button>
+                    </form>
+
+                    <div id="fare-result" class="trip-result" style="display: none;">
+                        <!-- Fare result will appear here -->
+                    </div>
+                </div>
+
+                <!-- Recent Searches (saved in browser) -->
+                <div id="recent-searches" class="recent-searches" style="display: none;">
+                    <h4>🕒 Recent Calculations</h4>
+                    <div id="recent-searches-list">
+                        <!-- Recent searches will appear here -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Fare Matrix Reference -->
+        <section class="fare-matrix">
+            <div class="container">
+                <h3>📊 Fare Reference Guide</h3>
+                
+                <div class="line-tabs">
+                    <button class="line-tab active" data-line="mrt3">MRT-3</button>
+                    <button class="line-tab" data-line="lrt1">LRT-1</button>
+                    <button class="line-tab" data-line="lrt2">LRT-2</button>
+                    <button class="line-tab" data-line="edsacarousel">EDSA Carousel</button>
+                </div>
+
+                <div id="fare-reference">
+                    <!-- Fare reference table will be populated by JavaScript -->
+                </div>
+
+                <div class="fare-note">
+                    <strong>📌 Note:</strong> Fares shown are estimates based on standard rates. 
+                    Actual fares may vary slightly. Fares are rounded to the nearest Philippine Peso.
+                </div>
+
+                <div class="beep-card-tip">
+                    <h4>💳 Beep Card Tips</h4>
+                    <ul>
+                        <li>Minimum load: ₱100 for new cards</li>
+                        <li>Maximum load: ₱10,000</li>
+                        <li>Cards can be used on MRT, LRT, and select buses</li>
+                        <li>Tap cards at entrance AND exit - otherwise you'll be charged maximum fare</li>
+                        <li>You can reload at any station ticket booth or convenience stores</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section style="background: #f5f5f5; padding: 3rem 0;">
+            <div class="container">
+                <h3 style="text-align: center; margin-bottom: 2rem;">❓ Frequently Asked Questions</h3>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+                    <div style="background: white; padding: 1.5rem; border-radius: 10px;">
+                        <h4 style="color: #2c3e50; margin-bottom: 1rem;">Do children pay fare?</h4>
+                        <p>Children below 3 feet tall (approx. 0.91m) ride for free. Students and senior citizens get 20% discount with valid ID.</p>
+                    </div>
+
+                    <div style="background: white; padding: 1.5rem; border-radius: 10px;">
+                        <h4 style="color: #2c3e50; margin-bottom: 1rem;">What if I exit at a different station?</h4>
+                        <p>You'll be charged the fare for your actual exit station. If using Beep Card, always tap out so you're charged correctly.</p>
+                    </div>
+
+                    <div style="background: white; padding: 1.5rem; border-radius: 10px;">
+                        <h4 style="color: #2c3e50; margin-bottom: 1rem;">Can I use one ticket for transfers?</h4>
+                        <p>Single journey tickets are for one line only. For transfers, you need a Beep Card or buy separate tickets.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Commuter Assistant. Built for first-time commuters.</p>
+        </div>
+    </footer>
+
+    <script src="js/data.js"></script>
+    <script>
+        // Fare Calculator Specific JavaScript
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize the fare calculator
+            initializeFareCalculator();
+            
+            // Load recent searches from localStorage
+            loadRecentSearches();
+            
+            // Setup line tabs for fare reference
+            setupLineTabs();
+            
+            // Show default fare reference (MRT-3)
+            showFareReference('mrt3');
+        });
+
+        function initializeFareCalculator() {
+            const lineSelect = document.getElementById('line-select');
+            const fromSelect = document.getElementById('fare-from');
+            const toSelect = document.getElementById('fare-to');
+            const calculateBtn = document.getElementById('calculate-btn');
+            const fareForm = document.getElementById('fare-form');
+
+            // When line is selected, populate station dropdowns
+            lineSelect.addEventListener('change', function() {
+                const selectedLine = this.value;
+                
+                if (selectedLine) {
+                    // Enable dropdowns
+                    fromSelect.disabled = false;
+                    toSelect.disabled = false;
+                    calculateBtn.disabled = false;
+                    
+                    // Populate stations for this line
+                    populateStationDropdownsForLine(selectedLine);
+                } else {
+                    // Disable dropdowns
+                    fromSelect.disabled = true;
+                    toSelect.disabled = true;
+                    calculateBtn.disabled = true;
+                    
+                    // Reset dropdowns
+                    fromSelect.innerHTML = '<option value="">First select a line</option>';
+                    toSelect.innerHTML = '<option value="">First select a line</option>';
+                }
+            });
+
+            // Handle form submission
+            fareForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                calculateFare();
+            });
+        }
+
+        function populateStationDropdownsForLine(line) {
+            const fromSelect = document.getElementById('fare-from');
+            const toSelect = document.getElementById('fare-to');
+            
+            // Get stations for the selected line
+            const stations = transitData[line]?.stations || [];
+            
+            // Clear and populate from dropdown
+            fromSelect.innerHTML = '<option value="">Select starting station</option>';
+            stations.forEach(station => {
+                const option = document.createElement('option');
+                option.value = station;
+                option.textContent = station;
+                fromSelect.appendChild(option);
+            });
+            
+            // Clear and populate to dropdown (same stations)
+            toSelect.innerHTML = '<option value="">Select destination</option>';
+            stations.forEach(station => {
+                const option = document.createElement('option');
+                option.value = station;
+                option.textContent = station;
+                toSelect.appendChild(option);
+            });
+        }
+
+        function calculateFare() {
+            const line = document.getElementById('line-select').value;
+            const from = document.getElementById('fare-from').value;
+            const to = document.getElementById('fare-to').value;
+            const resultDiv = document.getElementById('fare-result');
+            
+            // Validation
+            if (!from || !to) {
+                alert('Please select both stations');
+                return;
+            }
+            
+            if (from === to) {
+                alert('Starting point and destination cannot be the same');
+                return;
+            }
+            
+            // Calculate fare
+            const lineData = transitData[line];
+            const fareData = fareMatrix[line];
+            
+            const fromIndex = lineData.stations.indexOf(from);
+            const toIndex = lineData.stations.indexOf(to);
+            
+            const stationCount = Math.abs(toIndex - fromIndex);
+            const baseFare = fareData.baseFare;
+            const perStation = fareData.perStation;
+            
+            // Calculate different fare types
+            const singleJourneyFare = Math.round(baseFare + (stationCount * perStation));
+            const beepCardFare = Math.round((baseFare + (stationCount * perStation)) * 0.95); // 5% discount estimate
+            const studentFare = Math.round(singleJourneyFare * 0.8); // 20% discount
+            
+            // Calculate travel time estimate (approx 2-3 minutes per station)
+            const travelTime = stationCount * 2.5; // minutes
+            const formattedTime = travelTime < 60 ? 
+                `${Math.round(travelTime)} minutes` : 
+                `${Math.floor(travelTime/60)} hour ${Math.round(travelTime%60)} minutes`;
+            
+            // Get direction
+            const direction = fromIndex < toIndex ? 
+                `toward ${lineData.stations[lineData.stations.length - 1]}` : 
+                `toward ${lineData.stations[0]}`;
+            
+            // Save to recent searches
+            saveRecentSearch(line, from, to, singleJourneyFare);
+            
+            // Display result
+            resultDiv.innerHTML = `
+                <h4>🚆 Fare Result: ${from} → ${to}</h4>
+                
+                <div class="fare-breakdown">
+                    <p><span>Distance:</span> <strong>${stationCount} station${stationCount > 1 ? 's' : ''}</strong></p>
+                    <p><span>Direction:</span> <strong>${direction}</strong></p>
+                    <p><span>Estimated travel time:</span> <strong>${formattedTime}</strong></p>
+                    
+                    <h4 style="margin-top: 1rem; color: #2c3e50;">💰 Fare Options:</h4>
+                    
+                    <p><span>Single Journey Ticket:</span> <strong style="color: #e67e22;">₱${singleJourneyFare}</strong></p>
+                    <p><span>Beep Card (estimated):</span> <strong style="color: #27ae60;">₱${beepCardFare}</strong> <span style="font-size: 0.8rem; color: #666;">(~5% discount)</span></p>
+                    <p><span>Student/Senior:</span> <strong style="color: #2980b9;">₱${studentFare}</strong> <span style="font-size: 0.8rem; color: #666;">(with valid ID)</span></p>
+                    
+                    <div class="total">
+                        <span>Recommended load:</span> 
+                        <strong>₱${Math.ceil(singleJourneyFare / 10) * 10}+</strong>
+                        <span style="font-size: 0.8rem; font-weight: normal; color: #666;">(round up for buffer)</span>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 1rem; padding: 1rem; background: #e8f4f8; border-radius: 5px;">
+                    <p style="margin: 0; font-size: 0.9rem;">
+                        <strong>💡 Tip:</strong> If using Beep Card, make sure you have at least ₱${singleJourneyFare + 20} load 
+                        in case you need to transfer or take a different route.
+                    </p>
+                </div>
+                
+                <div style="margin-top: 1rem; text-align: right;">
+                    <small>Fares updated: March 2024</small>
+                </div>
+            `;
+            
+            resultDiv.style.display = 'block';
+            
+            // Refresh recent searches
+            loadRecentSearches();
+        }
+
+        function saveRecentSearch(line, from, to, fare) {
+            let searches = JSON.parse(localStorage.getItem('recentFareSearches') || '[]');
+            
+            // Add to beginning
+            searches.unshift({
+                line: line,
+                from: from,
+                to: to,
+                fare: fare,
+                timestamp: new Date().toLocaleString()
+            });
+            
+            // Keep only last 5 searches
+            searches = searches.slice(0, 5);
+            
+            localStorage.setItem('recentFareSearches', JSON.stringify(searches));
+        }
+
+        function loadRecentSearches() {
+            const searches = JSON.parse(localStorage.getItem('recentFareSearches') || '[]');
+            const container = document.getElementById('recent-searches');
+            const listDiv = document.getElementById('recent-searches-list');
+            
+            if (searches.length === 0) {
+                container.style.display = 'none';
+                return;
+            }
+            
+            container.style.display = 'block';
+            
+            let html = '';
+            searches.forEach(search => {
+                const lineName = transitData[search.line]?.name || search.line;
+                html += `
+                    <div class="recent-search-item" onclick="quickFillSearch('${search.line}', '${search.from}', '${search.to}')">
+                        <strong>${search.from} → ${search.to}</strong><br>
+                        <small>${lineName} | ₱${search.fare} | ${search.timestamp}</small>
+                    </div>
+                `;
+            });
+            
+            listDiv.innerHTML = html;
+        }
+
+        function quickFillSearch(line, from, to) {
+            document.getElementById('line-select').value = line;
+            
+            // Trigger change event to load stations
+            const event = new Event('change');
+            document.getElementById('line-select').dispatchEvent(event);
+            
+            // Small delay to ensure stations are loaded
+            setTimeout(() => {
+                document.getElementById('fare-from').value = from;
+                document.getElementById('fare-to').value = to;
+                
+                // Calculate fare
+                calculateFare();
+            }, 100);
+        }
+
+        function setupLineTabs() {
+            const tabs = document.querySelectorAll('.line-tab');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // Remove active class from all tabs
+                    tabs.forEach(t => t.classList.remove('active'));
+                    
+                    // Add active class to clicked tab
+                    this.classList.add('active');
+                    
+                    // Show fare reference for selected line
+                    const line = this.dataset.line;
+                    showFareReference(line);
+                });
+            });
+        }
+
+        function showFareReference(line) {
+            const referenceDiv = document.getElementById('fare-reference');
+            const lineData = transitData[line];
+            const fareData = fareMatrix[line];
+            
+            if (!lineData || !fareData) return;
+            
+            let html = `
+                <table class="fare-table">
+                    <thead>
+                        <tr>
+                            <th>From → To</th>
+                            <th>Stations</th>
+                            <th>Est. Fare</th>
+                            <th>Travel Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            // Show sample routes (first to last, first to middle, etc.)
+            const stations = lineData.stations;
+            const samples = [
+                { from: stations[0], to: stations[stations.length - 1], desc: "End to end" },
+                { from: stations[0], to: stations[Math.floor(stations.length/2)], desc: "First to middle" },
+                { from: stations[Math.floor(stations.length/3)], to: stations[Math.floor(stations.length*2/3)], desc: "Short trip" }
+            ];
+            
+            samples.forEach(sample => {
+                const fromIndex = stations.indexOf(sample.from);
+                const toIndex = stations.indexOf(sample.to);
+                const stationCount = Math.abs(toIndex - fromIndex);
+                const fare = Math.round(fareData.baseFare + (stationCount * fareData.perStation));
+                const travelTime = Math.round(stationCount * 2.5); // minutes
+                
+                html += `
+                    <tr>
+                        <td><strong>${sample.from}</strong> → <strong>${sample.to}</strong><br><small>${sample.desc}</small></td>
+                        <td>${stationCount} stations</td>
+                        <td>₱${fare}</td>
+                        <td>~${travelTime} min</td>
+                    </tr>
+                `;
+            });
+            
+            html += `
+                    </tbody>
+                </table>
+                <p style="margin-top: 1rem; text-align: center; color: #666;">
+                    <small>Base fare: ₱${fareData.baseFare} + ₱${fareData.perStation.toFixed(2)} per station</small>
+                </p>
+            `;
+            
+            referenceDiv.innerHTML = html;
+        }
+
+        // Make quickFillSearch available globally
+        window.quickFillSearch = quickFillSearch;
+    </script>
+</body>
+</html>

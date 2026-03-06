@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beginner's Guides | Commuter Assistant</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* Additional styles for guides page */
+        .guides-hero {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+            text-align: center;
+            padding: 3rem 0;
+        }
+
+        .guides-hero h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .guides-hero p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .guides-container {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        /* Main guide content */
+        .guide-section {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .guide-section h3 {
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 0.5rem;
+        }
+
+        .guide-section h4 {
+            color: #34495e;
+            margin: 1.5rem 0 1rem 0;
+            font-size: 1.3rem;
+        }
+
+        .guide-section h4:first-of-type {
+            margin-top: 0;
+        }
+
+        .step-by-step {
+            list-style: none;
+            padding: 0;
+        }
+
+        .step-by-step li {
+            margin-bottom: 1.5rem;
+            padding-left: 3rem;
+            position: relative;
+            counter-increment: step-counter;
+        }
+
+        .step-by-step {
+            counter-reset: step-counter;
+        }
+
+        .step-by-step li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 2rem;
+            height: 2rem;
+            background: #3498db;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .tip-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 5px;
+        }
+
+        .tip-box h5 {
+            color: #856404;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .warning-box {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 5px;
+        }
+
+        .warning-box h5 {
+            color: #721c24;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .info-box {
+            background: #d1ecf1;
+            border-left: 4px solid #17a2b8;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 5px;
+        }
+
+        .info-box h5 {
+            color: #0c5460;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .guide-image-placeholder {
+            background: #f0f0f0;
+            border-radius: 10px;
+            padding: 2rem;
+            text-align: center;
+            margin: 1rem 0;
+            border: 2px dashed #ccc;
+        }
+
+        .guide-image-placeholder i {
+            font-size: 3rem;
+            color: #999;
+            display: block;
+            margin-bottom: 1rem;
+        }
+
+        /* Sidebar */
+        .guides-sidebar {
+            position: sticky;
+            top: 2rem;
+            height: fit-content;
+        }
+
+        .sidebar-widget {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .sidebar-widget h4 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 0.5rem;
+        }
+
+        .quick-links {
+            list-style: none;
+            padding: 0;
+        }
+
+        .quick-links li {
+            margin-bottom: 0.8rem;
+        }
+
+        .quick-links a {
+            color: #3498db;
+            text-decoration: none;
+            display: block;
+            padding: 0.5rem;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+
+        .quick-links a:hover {
+            background: #f0f0f0;
+            color: #2980b9;
+        }
+
+        .glossary-term {
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .glossary-term:last-child {
+            border-bottom: none;
+        }
+
+        .glossary-term strong {
+            color: #2c3e50;
+            display: block;
+            margin-bottom: 0.3rem;
+        }
+
+        .glossary-term p {
+            color: #666;
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        .emergency-numbers {
+            background: #f8d7da;
+            border-radius: 8px;
+            padding: 1rem;
+        }
+
+        .emergency-numbers p {
+            margin: 0.5rem 0;
+            font-size: 1.1rem;
+        }
+
+        .emergency-numbers i {
+            margin-right: 0.5rem;
+            color: #dc3545;
+        }
+
+        .print-guide {
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .print-btn {
+            background: #2c3e50;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s;
+            width: 100%;
+        }
+
+        .print-btn:hover {
+            background: #34495e;
+        }
+
+        /* Tab navigation for guides */
+        .guide-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .guide-tab {
+            padding: 1rem 2rem;
+            background: #f0f0f0;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .guide-tab:hover {
+            background: #e0e0e0;
+        }
+
+        .guide-tab.active {
+            background: #3498db;
+            color: white;
+        }
+
+        .guide-content {
+            display: none;
+        }
+
+        .guide-content.active {
+            display: block;
+        }
+
+        /* Comparison table */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 1rem;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        .comparison-table th {
+            background: #2c3e50;
+            color: white;
+        }
+
+        .comparison-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .comparison-table tr:hover {
+            background: #e8f4f8;
+        }
+
+        @media (max-width: 768px) {
+            .guides-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .guides-sidebar {
+                position: static;
+            }
+            
+            .guide-tabs {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="container">
+                <h1 class="logo">🚆 Commuter<span>Assistant</span></h1>
+                <ul class="nav-menu">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="fare.html">Fare Calculator</a></li>
+                    <li><a href="stations.html">Stations</a></li>
+                    <li><a href="guides.html" class="active">Guides</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="guides-hero">
+            <div class="container">
+                <h2>📖 First-Time Commuter Guides</h2>
+                <p>Everything you need to know before your first ride</p>
+            </div>
+        </section>
+
+        <div class="container">
+            <div class="guides-container">
+                <!-- Main Content -->
+                <div class="guides-main">
+                    <!-- Guide Tabs -->
+                    <div class="guide-tabs">
+                        <button class="guide-tab active" data-tab="basics">🚆 Basics</button>
+                        <button class="guide-tab" data-tab="tickets">🎫 Tickets & Beep Card</button>
+                        <button class="guide-tab" data-tab="transfers">🔄 Transfers</button>
+                        <button class="guide-tab" data-tab="etiquette">✨ Etiquette & Safety</button>
+                    </div>
+
+                    <!-- Guide: Basics -->
+                    <div id="guide-basics" class="guide-content active">
+                        <div class="guide-section">
+                            <h3>🚆 Public Transportation Basics</h3>
+                            
+                            <h4>Which Line Should I Take?</h4>
+                            
+                            <table class="comparison-table">
+                                <thead>
+                                    <tr>
+                                        <th>Line</th>
+                                        <th>Route</th>
+                                        <th>Best For</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong style="color: #0066b3;">MRT-3</strong></td>
+                                        <td>North Avenue ↔ Taft Avenue</td>
+                                        <td>EDSA, Cubao, Ortigas, Makati</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong style="color: #00994d;">LRT-1</strong></td>
+                                        <td>Roosevelt ↔ Baclaran</td>
+                                        <td>Monumento, Doroteo Jose, EDSA, Baclaran</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong style="color: #800080;">LRT-2</strong></td>
+                                        <td>Recto ↔ Antipolo</td>
+                                        <td>Recto, Cubao, Katipunan, Marikina</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong style="color: #ff6600;">EDSA Carousel</strong></td>
+                                        <td>Monumento ↔ Baclaran</td>
+                                        <td>Following EDSA, same route as buses</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <div class="info-box">
+                                <h5>🕐 Operating Hours</h5>
+                                <p><strong>MRT/LRT:</strong> 5:30 AM - 9:30 PM (weekdays) | 6:00 AM - 9:00 PM (weekends)</p>
+                                <p><strong>EDSA Carousel:</strong> 24 hours (but less frequent at night)</p>
+                            </div>
+
+                            <h4>Step-by-Step: Your First Commute</h4>
+                            
+                            <ol class="step-by-step">
+                                <li>
+                                    <strong>Plan your trip</strong> - Use our <a href="index.html">trip planner</a> to know your route, transfers, and fare.
+                                </li>
+                                <li>
+                                    <strong>Prepare payment</strong> - Have exact cash or a loaded Beep card ready.
+                                </li>
+                                <li>
+                                    <strong>Enter the station</strong> - Look for the entrance with your line's sign.
+                                </li>
+                                <li>
+                                    <strong>Buy ticket or tap Beep card</strong> - Go to the ticket booth or automated machine.
+                                </li>
+                                <li>
+                                    <strong>Go through the gates</strong> - Tap your card or insert ticket, wait for the gate to open.
+                                </li>
+                                <li>
+                                    <strong>Find your platform</strong> - Check signs for your direction (North/South or East/West).
+                                </li>
+                                <li>
+                                    <strong>Wait behind the yellow line</strong> - Let passengers exit before boarding.
+                                </li>
+                                <li>
+                                    <strong>Board the train</strong> - Move inside to make room for others.
+                                </li>
+                                <li>
+                                    <strong>Listen for announcements</strong> - Count the stations to your destination.
+                                </li>
+                                <li>
+                                    <strong>Alight and exit</strong> - Tap out with Beep card or insert ticket at the gate.
+                                </li>
+                            </ol>
+
+                            <div class="tip-box">
+                                <h5>💡 First-Time Tip</h5>
+                                <p>If you're unsure, look for station staff in blue uniforms or tell other commuters it's your first time—many will help!</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Guide: Tickets & Beep Card -->
+                    <div id="guide-tickets" class="guide-content">
+                        <div class="guide-section">
+                            <h3>🎫 Tickets & Beep Card Guide</h3>
+                            
+                            <h4>Option 1: Single Journey Ticket</h4>
+                            <p>Good for one trip on one line. Buy at ticket booths or vending machines.</p>
+                            
+                            <ol class="step-by-step">
+                                <li>
+                                    <strong>Check the fare</strong> - Use our <a href="fare.html">fare calculator</a> to know the amount.
+                                </li>
+                                <li>
+                                    <strong>Go to the ticket booth</strong> - Tell the cashier your destination station.
+                                </li>
+                                <li>
+                                    <strong>Pay exact fare</strong> - Cashiers may not have change for large bills.
+                                </li>
+                                <li>
+                                    <strong>Get your ticket</strong> - It's a small plastic card with magnetic strip.
+                                </li>
+                                <li>
+                                    <strong>Insert at entrance gate</strong> - Ticket pops out on top, take it.
+                                </li>
+                                <li>
+                                    <strong>Keep your ticket</strong> - You'll need it to exit.
+                                </li>
+                                <li>
+                                    <strong>Insert at exit gate</strong> - Gate keeps the ticket, you walk through.
+                                </li>
+                            </ol>
+
+                            <h4 style="margin-top: 2rem;">Option 2: Beep Card (Recommended)</h4>
+                            <p>A reloadable card that works on MRT, LRT, and select buses. Saves time and gives small discounts.</p>
+                            
+                            <ol class="step-by-step">
+                                <li>
+                                    <strong>Buy a Beep card</strong> - At any station ticket booth. Cost: ₱100 (includes ₱80 load).
+                                </li>
+                                <li>
+                                    <strong>Check your balance</strong> - Tap on the red scanner at station entrances.
+                                </li>
+                                <li>
+                                    <strong>Reload when low</strong> - At ticket booths, vending machines, or convenience stores (7-Eleven, Ministop).
+                                </li>
+                                <li>
+                                    <strong>Tap at entrance</strong> - Green light means success, red means insufficient balance.
+                                </li>
+                                <li>
+                                    <strong>Tap at exit</strong> - Always tap out, or you'll be charged maximum fare next time.
+                                </li>
+                            </ol>
+
+                            <div class="tip-box">
+                                <h5>💰 Beep Card Tips</h5>
+                                <ul style="margin-left: 1.5rem;">
+                                    <li>Minimum load: ₱100 for new cards</li>
+                                    <li>Maximum load: ₱10,000</li>
+                                    <li>Keep card away from magnets and phones (can demagnetize)</li>
+                                    <li>Register your card at beep.com.ph to protect balance if lost</li>
+                                    <li>Student and senior discounts available with valid ID (must be verified at station)</li>
+                                </ul>
+                            </div>
+
+                            <div class="warning-box">
+                                <h5>⚠️ Common Mistakes</h5>
+                                <ul style="margin-left: 1.5rem;">
+                                    <li><strong>Not tapping out</strong> - You'll be charged maximum fare next time</li>
+                                    <li><strong>Insufficient balance</strong> - Can't enter; reload at vending machines inside station</li>
+                                    <li><strong>Losing your single journey ticket</strong> - You'll have to pay again to exit</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Guide: Transfers -->
+                    <div id="guide-transfers" class="guide-content">
+                        <div class="guide-section">
+                            <h3>🔄 How to Transfer Between Lines</h3>
+                            
+                            <h4>Major Transfer Stations</h4>
+                            
+                            <table class="comparison-table">
+                                <thead>
+                                    <tr>
+                                        <th>Transfer Point</th>
+                                        <th>Connect</th>
+                                        <th>How to Transfer</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Araneta Center-Cubao</strong></td>
+                                        <td>MRT-3 ↔ LRT-2</td>
+                                        <td>Exit MRT station, walk through Farmers Plaza to LRT-2 (5-7 minutes)</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>EDSA / Taft Avenue</strong></td>
+                                        <td>LRT-1 ↔ MRT-3</td>
+                                        <td>Walk from LRT-1 EDSA station to MRT-3 Taft station via connecting walkway (3-5 minutes)</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Doroteo Jose / Recto</strong></td>
+                                        <td>LRT-1 ↔ LRT-2</td>
+                                        <td>Exit LRT-1 Doroteo Jose, walk to LRT-2 Recto station via covered walkway (3-4 minutes)</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Monumento</strong></td>
+                                        <td>LRT-1 ↔ EDSA Carousel</td>
+                                        <td>LRT-1 station is above; EDSA Carousel stops below on EDSA</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <h4 style="margin-top: 2rem;">Step-by-Step: Transferring at Cubao</h4>
+                            
+                            <ol class="step-by-step">
+                                <li>
+                                    <strong>Alight at MRT-3 Araneta Center-Cubao</strong> - Follow signs to "Exit A" or "Farmers Plaza"
+                                </li>
+                                <li>
+                                    <strong>Exit the paid area</strong> - Tap out with Beep card or insert ticket
+                                </li>
+                                <li>
+                                    <strong>Walk through Farmers Plaza</strong> - Go straight, pass the food court
+                                </li>
+                                <li>
+                                    <strong>Exit Farmers Plaza</strong> - Cross the street toward Gateway Mall
+                                </li>
+                                <li>
+                                    <strong>Look for LRT-2 signs</strong> - Entrance is near Gateway Mall
+                                </li>
+                                <li>
+                                    <strong>Enter LRT-2 station</strong> - Buy new ticket or tap Beep card
+                                </li>
+                                <li>
+                                    <strong>Go to platform</strong> - Check if you need East (Antipolo) or West (Recto)
+                                </li>
+                            </ol>
+
+                            <div class="tip-box">
+                                <h5>💡 Transfer Tips</h5>
+                                <ul style="margin-left: 1.5rem;">
+                                    <li>You need a separate ticket or Beep card for each line (no free transfers)</li>
+                                    <li>Beep cards work on all lines - just tap in and out at each station</li>
+                                    <li>During rush hour, transfers can be very crowded - allow extra time</li>
+                                    <li>Follow the crowd - many commuters make these transfers daily</li>
+                                </ul>
+                            </div>
+
+                            <div class="warning-box">
+                                <h5>⚠️ Important</h5>
+                                <p>You cannot transfer without exiting and re-entering. You must pay separate fares for each line unless using a Beep card (still pays separately but no need to buy new ticket).</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Guide: Etiquette & Safety -->
+                    <div id="guide-etiquette" class="guide-content">
+                        <div class="guide-section">
+                            <h3>✨ Commuter Etiquette & Safety</h3>
+                            
+                            <h4>Train Etiquette (The Unspoken Rules)</h4>
+                            
+                            <ul style="margin-left: 1.5rem; margin-bottom: 2rem;">
+                                <li><strong>Let passengers exit first</strong> - Stand on the sides, not in front of the door</li>
+                                <li><strong>Move inside</strong> - Don't block the doors; move toward the center</li>
+                                <li><strong>Give up seats</strong> - For elderly, pregnant, persons with disabilities, and parents with children</li>
+                                <li><strong>No eating or drinking</strong> - Not allowed inside stations or trains</li>
+                                <li><strong>Keep volume low</strong> - Use headphones, speak quietly</li>
+                                <li><strong>No leaning on poles</strong> - Others need to hold them</li>
+                                <li><strong>Keep bags in front</strong> - Creates more space and prevents pickpocketing</li>
+                            </ul>
+
+                            <h4>Safety Tips</h4>
+                            
+                            <div class="row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                <div class="info-box">
+                                    <h5>✅ DO</h5>
+                                    <ul style="margin-left: 1.5rem;">
+                                        <li>Keep valuables in front pockets</li>
+                                        <li>Be aware of your surroundings</li>
+                                        <li>Know your exit before arriving</li>
+                                        <li>Use designated waiting areas</li>
+                                        <li>Report suspicious items to security</li>
+                                    </ul>
+                                </div>
+                                
+                                <div class="warning-box">
+                                    <h5>❌ DON'T</h5>
+                                    <ul style="margin-left: 1.5rem;">
+                                        <li>Use phone near doors (snatching risk)</li>
+                                        <li>Fall asleep - you might miss your stop</li>
+                                        <li>Board overcrowded trains (wait for next)</li>
+                                        <li>Give money to strangers</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <h4 style="margin-top: 2rem;">Rush Hour Survival Guide</h4>
+                            
+                            <p><strong>Peak hours:</strong> 7:00-9:00 AM and 5:00-8:00 PM (weekdays)</p>
+                            
+                            <ol class="step-by-step">
+                                <li>
+                                    <strong>Arrive early</strong> - Queues can be 15-30 minutes long
+                                </li>
+                                <li>
+                                    <strong>Have payment ready</strong> - Beep card is fastest
+                                </li>
+                                <li>
+                                    <strong>Position yourself wisely</strong> - First car is usually less crowded
+                                </li>
+                                <li>
+                                    <strong>Let people off first</strong> - Otherwise no one can move
+                                </li>
+                                <li>
+                                    <strong>Move to the center</strong> - Don't block doors
+                                </li>
+                                <li>
+                                    <strong>Be patient</strong> - Everyone is trying to get to work/school too
+                                </li>
+                            </ol>
+
+                            <div class="tip-box">
+                                <h5>🎒 What to Bring</h5>
+                                <ul style="margin-left: 1.5rem;">
+                                    <li>Beep card or exact cash</li>
+                                    <li>Water (but don't drink inside train)</li>
+                                    <li>Hand sanitizer</li>
+                                    <li>Face mask (still required in some stations)</li>
+                                    <li>Phone with data (for our website!)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Lost & Found Section -->
+                    <div class="guide-section">
+                        <h3>🆘 Lost & Found / Emergency</h3>
+                        
+                        <div class="emergency-numbers" style="background: #f8d7da; padding: 1.5rem;">
+                            <p><i>🚨</i> <strong>Emergency:</strong> 911</p>
+                            <p><i>🚆</i> <strong>MRT Hotline:</strong> (02) 8929-3303</p>
+                            <p><i>🚈</i> <strong>LRT Hotline:</strong> (02) 8539-4426</p>
+                            <p><i>💳</i> <strong>Beep Card Support:</strong> (02) 5318-0932</p>
+                        </div>
+
+                        <h4 style="margin-top: 2rem;">What to do if you get lost:</h4>
+                        <ol style="margin-left: 1.5rem;">
+                            <li><strong>Stay calm</strong> - Don't panic</li>
+                            <li><strong>Ask station staff</strong> - Look for uniformed personnel</li>
+                            <li><strong>Check our website</strong> - Use the trip planner to find your way back</li>
+                            <li><strong>If you missed your stop</strong> - Stay on until the next station, then go to the opposite platform</li>
+                            <li><strong>Lost item?</strong> - Go to the station's customer service counter</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- Sidebar -->
+                <div class="guides-sidebar">
+                    <div class="sidebar-widget">
+                        <h4>📌 Quick Links</h4>
+                        <ul class="quick-links">
+                            <li><a href="fare.html">💰 Calculate Fare</a></li>
+                            <li><a href="stations.html">🗺️ Station Guide</a></li>
+                            <li><a href="index.html">📍 Plan Trip</a></li>
+                            <li><a href="#" onclick="window.print(); return false;">🖨️ Print This Guide</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="sidebar-widget">
+                        <h4>📚 Commuter Glossary</h4>
+                        
+                        <div class="glossary-term">
+                            <strong>Beep Card</strong>
+                            <p>Reloadable card used for MRT, LRT, and buses. Tap at entrances and exits.</p>
+                        </div>
+                        
+                        <div class="glossary-term">
+                            <strong>Single Journey Ticket</strong>
+                            <p>One-time use ticket for one line. Buy at station, return at exit.</p>
+                        </div>
+                        
+                        <div class="glossary-term">
+                            <strong>Transfer</strong>
+                            <p>Changing from one line to another (e.g., MRT to LRT). Requires exiting and re-entering.</p>
+                        </div>
+                        
+                        <div class="glossary-term">
+                            <strong>Platform</strong>
+                            <p>The area where you wait for the train. Has yellow safety line.</p>
+                        </div>
+                        
+                        <div class="glossary-term">
+                            <strong>Alight</strong>
+                            <p>To get off the train at your station.</p>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-widget">
+                        <h4>📱 Downloadable Tips</h4>
+                        <p>Save this guide to your phone:</p>
+                        <button class="print-btn" onclick="saveForOffline()">💾 Save for Offline</button>
+                        <p style="font-size: 0.8rem; margin-top: 0.5rem; color: #666;">Takes a screenshot or bookmark this page</p>
+                    </div>
+
+                    <div class="sidebar-widget">
+                        <h4>🗣️ Common Tagalog Phrases</h4>
+                        
+                        <div class="glossary-term">
+                            <strong>"Magkano po?"</strong>
+                            <p>How much is it?</p>
+                        </div>
+                        
+                        <div class="glossary-term">
+                            <strong>"Sa'n po ang sakayan ng [line]?"</strong>
+                            <p>Where do I board [line]?</p>
+                        </div>
+                        
+                        <div class="glossary-term">
+                            <strong>"Para po."</strong>
+                            <p>Stop please (for buses/jeeps).</p>
+                        </div>
+                        
+                        <div class="glossary-term">
+                            <strong>"Tawid po."</strong>
+                            <p>Crossing the street.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Commuter Assistant. Built for first-time commuters.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Guides page JavaScript
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Setup guide tabs
+            setupGuideTabs();
+        });
+
+        function setupGuideTabs() {
+            const tabs = document.querySelectorAll('.guide-tab');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // Remove active class from all tabs and content
+                    tabs.forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.guide-content').forEach(c => c.classList.remove('active'));
+                    
+                    // Add active class to clicked tab
+                    this.classList.add('active');
+                    
+                    // Show corresponding content
+                    const tabId = this.dataset.tab;
+                    document.getElementById(`guide-${tabId}`).classList.add('active');
+                    
+                    // Scroll to top of guides
+                    document.querySelector('.guides-main').scrollIntoView({ behavior: 'smooth' });
+                });
+            });
+        }
+
+        function saveForOffline() {
+            // Simple instruction for users
+            alert('📱 To save for offline:\n\n• Chrome/Edge: Right click → Save as\n• Mobile: Take a screenshot\n• Or bookmark this page');
+        }
+
+        // Handle print
+        window.onbeforeprint = function() {
+            // Optional: expand all sections before printing
+            document.querySelectorAll('.guide-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.guide-content').forEach(c => c.classList.add('active'));
+        };
+
+        // Check if user is on mobile and show appropriate message
+        if (/Mobi|Android/i.test(navigator.userAgent)) {
+            console.log('Mobile user - optimized layout loaded');
+        }
+    </script>
+</body>
+</html>

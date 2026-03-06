@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Station Guide | Commuter Assistant</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* Additional styles for stations page */
+        .station-hero {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            text-align: center;
+            padding: 3rem 0;
+        }
+
+        .station-hero h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .station-hero p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .line-filter {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-top: -2rem;
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        .filter-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+
+        .filter-btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .filter-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .filter-btn.active {
+            background: #3498db;
+            color: white;
+        }
+
+        .filter-btn[data-line="mrt3"].active { background: #0066b3; }
+        .filter-btn[data-line="lrt1"].active { background: #00994d; }
+        .filter-btn[data-line="lrt2"].active { background: #800080; }
+        .filter-btn[data-line="edsacarousel"].active { background: #ff6600; }
+
+        .search-box {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .stations-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .line-section {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .line-section:hover {
+            transform: translateY(-5px);
+        }
+
+        .line-header {
+            padding: 1.5rem;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .line-header.mrt3 { background: #0066b3; }
+        .line-header.lrt1 { background: #00994d; }
+        .line-header.lrt2 { background: #800080; }
+        .line-header.edsacarousel { background: #ff6600; }
+
+        .line-header h3 {
+            font-size: 1.5rem;
+            margin: 0;
+        }
+
+        .station-count {
+            background: rgba(255,255,255,0.2);
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .station-list {
+            padding: 1rem;
+        }
+
+        .station-item {
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: background 0.3s;
+            position: relative;
+        }
+
+        .station-item:hover {
+            background: #f8f9fa;
+        }
+
+        .station-item:last-child {
+            border-bottom: none;
+        }
+
+        .station-name {
+            font-weight: 600;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .station-name::before {
+            content: "🚉";
+            font-size: 1.2rem;
+        }
+
+        .station-details {
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            color: #666;
+            display: none;
+            padding-left: 2rem;
+        }
+
+        .station-item.expanded .station-details {
+            display: block;
+        }
+
+        .landmark-tag {
+            display: inline-block;
+            background: #e8f4f8;
+            color: #2c3e50;
+            padding: 0.2rem 0.8rem;
+            border-radius: 15px;
+            margin: 0.2rem;
+            font-size: 0.8rem;
+        }
+
+        .transfer-tag {
+            display: inline-block;
+            background: #fff3cd;
+            color: #856404;
+            padding: 0.2rem 0.8rem;
+            border-radius: 15px;
+            margin: 0.2rem;
+            font-size: 0.8rem;
+        }
+
+        .station-tip {
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            background: #f0f0f0;
+            border-radius: 5px;
+            font-style: italic;
+        }
+
+        .expand-icon {
+            float: right;
+            color: #999;
+            transition: transform 0.3s;
+        }
+
+        .station-item.expanded .expand-icon {
+            transform: rotate(180deg);
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 3rem;
+            background: white;
+            border-radius: 10px;
+            margin-top: 2rem;
+        }
+
+        .no-results p {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 1rem;
+        }
+
+        .quick-tips {
+            background: #f8f9fa;
+            padding: 3rem 0;
+            margin-top: 3rem;
+        }
+
+        .tips-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .tip-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .tip-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .tip-card h4 {
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+        }
+
+        .tip-card p {
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        @media (max-width: 768px) {
+            .stations-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .station-hero h2 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="container">
+                <h1 class="logo">🚆 Commuter<span>Assistant</span></h1>
+                <ul class="nav-menu">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="fare.html">Fare Calculator</a></li>
+                    <li><a href="stations.html" class="active">Stations</a></li>
+                    <li><a href="guides.html">Guides</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="station-hero">
+            <div class="container">
+                <h2>🗺️ Complete Station Guide</h2>
+                <p>Everything you need to know about MRT, LRT, and EDSA Carousel stations</p>
+            </div>
+        </section>
+
+        <div class="container">
+            <!-- Filter and Search -->
+            <div class="line-filter">
+                <div class="filter-buttons">
+                    <button class="filter-btn active" data-line="all">🚆 All Lines</button>
+                    <button class="filter-btn" data-line="mrt3">🔵 MRT-3</button>
+                    <button class="filter-btn" data-line="lrt1">🟢 LRT-1</button>
+                    <button class="filter-btn" data-line="lrt2">🟣 LRT-2</button>
+                    <button class="filter-btn" data-line="edsacarousel">🟠 EDSA Carousel</button>
+                </div>
+
+                <div class="search-box">
+                    <input type="text" id="station-search" placeholder="🔍 Search for a station (e.g., 'Cubao', 'EDSA')...">
+                </div>
+            </div>
+
+            <!-- Stations Display -->
+            <div id="stations-display">
+                <!-- Will be populated by JavaScript -->
+            </div>
+
+            <!-- No Results Message (hidden by default) -->
+            <div id="no-results" class="no-results" style="display: none;">
+                <p>😕 No stations found matching your search</p>
+                <button class="btn-primary" onclick="clearSearch()">Clear Search</button>
+            </div>
+        </div>
+
+        <!-- Quick Tips for First-Timers -->
+        <section class="quick-tips">
+            <div class="container">
+                <h3 style="text-align: center; margin-bottom: 1rem;">📍 First-Time Commuter Tips</h3>
+                
+                <div class="tips-grid">
+                    <div class="tip-card">
+                        <div class="tip-icon">🚉</div>
+                        <h4>Know Your Exit</h4>
+                        <p>Large stations like Cubao and EDSA have multiple exits. Check landmarks before going up.</p>
+                    </div>
+
+                    <div class="tip-card">
+                        <div class="tip-icon">🔄</div>
+                        <h4>Transfer Stations</h4>
+                        <p>Cubao connects MRT and LRT-2. EDSA/Doroteo Jose connects LRT-1 and LRT-2 via walkway.</p>
+                    </div>
+
+                    <div class="tip-card">
+                        <div class="tip-icon">🚶</div>
+                        <h4>Walking Distance</h4>
+                        <p>Some stations look close on map but require long walks. Ask station staff for the nearest exit.</p>
+                    </div>
+
+                    <div class="tip-card">
+                        <div class="tip-icon">🧭</div>
+                        <h4>Direction Matters</h4>
+                        <p>Always check if train is heading North or South before boarding.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Commuter Assistant. Built for first-time commuters.</p>
+        </div>
+    </footer>
+
+    <script src="js/data.js"></script>
+    <script>
+        // Station Guide JavaScript
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Display all stations initially
+            displayAllStations();
+            
+            // Setup filter buttons
+            setupFilterButtons();
+            
+            // Setup search functionality
+            setupSearch();
+        });
+
+        // Global variables
+        let currentFilter = 'all';
+        let currentSearchTerm = '';
+
+        function displayAllStations() {
+            const displayDiv = document.getElementById('stations-display');
+            const lines = ['mrt3', 'lrt1', 'lrt2', 'edsacarousel'];
+            
+            let html = '<div class="stations-container">';
+            
+            lines.forEach(line => {
+                html += generateStationSection(line);
+            });
+            
+            html += '</div>';
+            
+            displayDiv.innerHTML = html;
+            
+            // Add click handlers for station items
+            addStationClickHandlers();
+        }
+
+        function generateStationSection(line) {
+            const lineData = transitData[line];
+            if (!lineData) return '';
+            
+            const lineDisplayName = {
+                'mrt3': 'MRT-3',
+                'lrt1': 'LRT-1',
+                'lrt2': 'LRT-2',
+                'edsacarousel': 'EDSA Carousel'
+            };
+            
+            let sectionHtml = `
+                <div class="line-section" data-line="${line}">
+                    <div class="line-header ${line}">
+                        <h3>${lineDisplayName[line]}</h3>
+                        <span class="station-count">${lineData.stations.length} stations</span>
+                    </div>
+                    <div class="station-list" id="station-list-${line}">
+            `;
+            
+            // Add each station
+            lineData.stations.forEach(station => {
+                const landmarks = stationLandmarks[station] || [];
+                const transfers = transferPoints[station] || [];
+                const hasTransfer = transfers.length > 0;
+                
+                // Generate random tip (in real app, these would be predefined)
+                const tips = [
+                    "Busy during rush hour (7-9 AM, 5-8 PM)",
+                    "Has elevator access",
+                    "Near popular food spots",
+                    "Long queue during payday",
+                    "Has connecting walkway to nearby mall"
+                ];
+                const randomTip = tips[Math.floor(Math.random() * tips.length)];
+                
+                sectionHtml += `
+                    <div class="station-item" data-station="${station}" data-line="${line}">
+                        <div class="station-name">
+                            ${station}
+                            <span class="expand-icon">▼</span>
+                        </div>
+                        
+                        <div class="station-details">
+                            <div style="margin-bottom: 0.8rem;">
+                                <strong>📍 Landmarks:</strong><br>
+                                ${landmarks.length > 0 ? 
+                                    landmarks.map(l => `<span class="landmark-tag">${l}</span>`).join(' ') : 
+                                    '<span style="color: #999;">No landmarks recorded yet</span>'
+                                }
+                            </div>
+                            
+                            ${hasTransfer ? `
+                                <div style="margin-bottom: 0.8rem;">
+                                    <strong>🔄 Transfer to:</strong><br>
+                                    ${transfers.map(t => `<span class="transfer-tag">${t}</span>`).join(' ')}
+                                </div>
+                            ` : ''}
+                            
+                            <div class="station-tip">
+                                <strong>💡 Tip:</strong> ${randomTip}
+                            </div>
+                            
+                            <div style="margin-top: 0.8rem; font-size: 0.8rem; color: #999;">
+                                <span>📍 Line: ${lineDisplayName[line]}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            sectionHtml += `
+                    </div>
+                </div>
+            `;
+            
+            return sectionHtml;
+        }
+
+        function addStationClickHandlers() {
+            const stationItems = document.querySelectorAll('.station-item');
+            
+            stationItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    // Toggle expanded class
+                    this.classList.toggle('expanded');
+                });
+            });
+        }
+
+        function setupFilterButtons() {
+            const buttons = document.querySelectorAll('.filter-btn');
+            
+            buttons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Remove active class from all buttons
+                    buttons.forEach(b => b.classList.remove('active'));
+                    
+                    // Add active class to clicked button
+                    this.classList.add('active');
+                    
+                    // Update current filter
+                    currentFilter = this.dataset.line;
+                    
+                    // Apply filter
+                    filterAndSearch();
+                });
+            });
+        }
+
+        function setupSearch() {
+            const searchInput = document.getElementById('station-search');
+            
+            searchInput.addEventListener('input', function() {
+                currentSearchTerm = this.value.toLowerCase().trim();
+                filterAndSearch();
+            });
+        }
+
+        function filterAndSearch() {
+            const lineSections = document.querySelectorAll('.line-section');
+            const noResultsDiv = document.getElementById('no-results');
+            
+            let visibleCount = 0;
+            
+            lineSections.forEach(section => {
+                const line = section.dataset.line;
+                const stationItems = section.querySelectorAll('.station-item');
+                
+                // Check if this line should be visible based on filter
+                const lineVisible = currentFilter === 'all' || currentFilter === line;
+                
+                if (!lineVisible) {
+                    section.style.display = 'none';
+                    return;
+                }
+                
+                section.style.display = 'block';
+                
+                // Filter stations within this line based on search
+                let stationsVisible = 0;
+                
+                stationItems.forEach(item => {
+                    const stationName = item.dataset.station.toLowerCase();
+                    
+                    if (currentSearchTerm === '' || stationName.includes(currentSearchTerm)) {
+                        item.style.display = 'block';
+                        stationsVisible++;
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+                
+                // Hide entire line section if no stations match search
+                if (stationsVisible === 0) {
+                    section.style.display = 'none';
+                } else {
+                    visibleCount++;
+                }
+            });
+            
+            // Show/hide no results message
+            if (visibleCount === 0) {
+                noResultsDiv.style.display = 'block';
+            } else {
+                noResultsDiv.style.display = 'none';
+            }
+        }
+
+        function clearSearch() {
+            document.getElementById('station-search').value = '';
+            currentSearchTerm = '';
+            
+            // Reset filter to 'all'
+            document.querySelector('.filter-btn[data-line="all"]').click();
+            
+            filterAndSearch();
+        }
+
+        // Make clearSearch available globally
+        window.clearSearch = clearSearch;
+
+        // Add additional landmark data (extend the stationLandmarks object from data.js)
+        const additionalLandmarks = {
+            "North Avenue": ["SM North EDSA", "Trinoma", "Vertis North", "Sky Garden", "Mind Museum"],
+            "Quezon Avenue": ["Quezon Memorial Circle", "PEA", "Centris", "Eastwood (via jeep)"],
+            "Kamuning": ["GMA Network Center", "Kamuning Public Market", "Quezon City Hall"],
+            "Araneta Center-Cubao": ["Gateway Mall", "Farmers Plaza", "Ali Mall", "Araneta Coliseum", "Cubao Expo"],
+            "Santolan-Annapolis": ["Annapolis Plaza", "Santolan Town Plaza"],
+            "Ortigas": ["Robinsons Galleria", "Ortigas CBD", "The Podium", "SM Megamall (via walkway)"],
+            "Shaw Boulevard": ["Shangri-La Plaza", "EDSA Central", "Starmall"],
+            "Boni": ["Boni Avenue", "SM Light", "Pioneer Center"],
+            "Guadalupe": ["Rockwell (via jeep)", "Guadalupe Mall", "St. Therese Church"],
+            "Buendia": ["PBCom Tower", "RCBC Plaza", "Ayala North Exchange"],
+            "Ayala": ["Ayala Center", "Greenbelt", "SM Makati", "Glorietta", "Landmark"],
+            "Magallanes": ["Magallanes Village", "Manila Polo Club"],
+            "Taft Avenue": ["SM Manila", "St. Paul University", "DLSU", "CSB", "St. Scholastica's"],
+            
+            // LRT-1 landmarks
+            "Roosevelt": ["SM City Fairview (via jeep)", "Ever Gotesco"],
+            "Balintawak": ["Cloverleaf", "Balintawak Market"],
+            "Monumento": ["Monumento Circle", "Bonifacio Monument", "Victory Mall", "MacArthur Highway"],
+            "5th Avenue": ["5th Avenue", "Caloocan City Hall"],
+            "Doroteo Jose": ["Isetann Recto", "Divisoria (via jeep)", "University Belt"],
+            "Carriedo": ["Quiapo Church", "Quiapo Market", "Isetann Carriedo"],
+            "Central": ["Manila City Hall", "Liwasang Bonifacio", "Lawton"],
+            "United Nations": ["U.N. Avenue", "Rizal Park", "Manila Ocean Park"],
+            "Pedro Gil": ["Pedro Gil Street", "Adamson University"],
+            "Vito Cruz": ["Vito Cruz Street", "University of the Philippines (UP) Manila"],
+            "Gil Puyat": ["Gil Puyat Avenue", "World Trade Center"],
+            "Libertad": ["Libertad Market", "Pasay City Hall"],
+            "EDSA": ["SM Mall of Asia (via jeep/bus)", "Taft Avenue", "MRT-3 Taft Station"],
+            "Baclaran": ["Baclaran Church", "Baclaran Market", "Parañaque Terminal"],
+            
+            // LRT-2 landmarks
+            "Recto": ["University Belt", "FEU", "UE", "Divisoria (via jeep)"],
+            "Legarda": ["Legarda Street", "San Beda University"],
+            "Pureza": ["Polytechnic University of the Philippines (PUP)"],
+            "V. Mapa": ["V. Mapa Street", "University of the East (UE)"],
+            "Gilmore": ["Gilmore IT Center", "St. Paul University"],
+            "Katipunan": ["Ateneo de Manila University", "UP Town Center"],
+            "Marikina": ["Marikina Sports Complex", "Riverbanks Center"],
+            "Antipolo": ["Antipolo Cathedral", "Ynares Center", "Robinsons Antipolo"],
+            
+            // EDSA Carousel (mostly same as LRT-1 stations)
+            "Monumento": ["Monumento Circle", "Victory Mall"],
+            "Blumentritt": ["Blumentritt Market", "Jose Rizal University"],
+            "Tayuman": ["Tayuman Street"],
+            "Doroteo Jose": ["Isetann Recto", "Divisoria"],
+            "Carriedo": ["Quiapo Church"],
+            "Central": ["Manila City Hall"],
+            "United Nations": ["Rizal Park"],
+            "Pedro Gil": ["Adamson University"],
+            "Vito Cruz": ["UP Manila"],
+            "Gil Puyat": ["World Trade Center"],
+            "Libertad": ["Pasay City Hall"],
+            "EDSA": ["SM MOA", "Taft Avenue"],
+            "Baclaran": ["Baclaran Church"]
+        };
+        
+        // Merge additional landmarks with existing ones
+        Object.assign(stationLandmarks, additionalLandmarks);
+        
+        // Add transfer points
+        const additionalTransfers = {
+            "Doroteo Jose": ["LRT-1", "LRT-2 (via walk to Recto)"],
+            "Recto": ["LRT-2", "LRT-1 (via walk to Doroteo Jose)"],
+            "EDSA": ["LRT-1", "MRT-3 (via walk to Taft)"],
+            "Taft Avenue": ["MRT-3", "LRT-1 (via walk to EDSA)"],
+            "Araneta Center-Cubao": ["MRT-3", "LRT-2"],
+            "North Avenue": ["MRT-3", "EDSA Carousel (via walk)"],
+            "Monumento": ["LRT-1", "EDSA Carousel"]
+        };
+        
+        // Merge additional transfers
+        Object.assign(transferPoints, additionalTransfers);
+    </script>
+</body>
+</html>

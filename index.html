@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Commuter Assistant | First-Time Commute Guide</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="container">
+                <h1 class="logo">🚆 Commuter<span>Assistant</span></h1>
+                <ul class="nav-menu">
+                    <li><a href="index.html" class="active">Home</a></li>
+                    <li><a href="fare.html">Fare Calculator</a></li>
+                    <li><a href="stations.html">Stations</a></li>
+                    <li><a href="guides.html">Guides</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="container">
+                <h2>Never get lost on your first commute</h2>
+                <p>Step-by-step guides, fare estimates, and station information for MRT, LRT-1, LRT-2, and EDSA Carousel</p>
+            </div>
+        </section>
+
+        <section class="features">
+            <div class="container">
+                <h3>How can we help you today?</h3>
+                
+                <div class="feature-grid">
+                    <div class="feature-card" onclick="window.location.href='fare.html'">
+                        <div class="feature-icon">💰</div>
+                        <h4>Fare Calculator</h4>
+                        <p>Know exactly how much to pay before you ride</p>
+                    </div>
+
+                    <div class="feature-card" onclick="window.location.href='#'" id="step-by-step-card">
+                        <div class="feature-icon">📍</div>
+                        <h4>Step-by-Step Guide</h4>
+                        <p>Get turn-by-turn instructions for your route</p>
+                    </div>
+
+                    <div class="feature-card" onclick="window.location.href='stations.html'">
+                        <div class="feature-icon">🗺️</div>
+                        <h4>Station Lists</h4>
+                        <p>See all stations with landmarks and transfers</p>
+                    </div>
+
+                    <div class="feature-card" onclick="window.location.href='guides.html'">
+                        <div class="feature-icon">📖</div>
+                        <h4>Beginner's Guides</h4>
+                        <p>How to buy tickets, use Beep cards, and more</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="quick-planner">
+            <div class="container">
+                <h3>Plan Your Trip</h3>
+                <div class="planner-box">
+                    <form id="trip-form">
+                        <div class="form-group">
+                            <label for="from-station">From:</label>
+                            <select id="from-station" required>
+                                <option value="">Select starting station</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="to-station">To:</label>
+                            <select id="to-station" required>
+                                <option value="">Select destination</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn-primary">Get Directions</button>
+                    </form>
+
+                    <div id="trip-result" class="trip-result" style="display: none;">
+                        <!-- Results will appear here -->
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Commuter Assistant. Built for first-time commuters.</p>
+        </div>
+    </footer>
+
+    <script src="js/data.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
