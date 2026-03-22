@@ -278,7 +278,7 @@
 
     <footer>
         <div class="container">
-            <p>&copy; 2024 Commuter Assistant. Built for first-time commuters.</p>
+            <p>&copy; 2026 Commuter Assistant. Built for first-time commuters.</p>
         </div>
     </footer>
 
@@ -391,9 +391,29 @@
             const stationCount = Math.abs(toIndex - fromIndex);
             const baseFare = fareData.baseFare;
             const perStation = fareData.perStation;
+
+            function calculateFareForLine(line, fromIndex, toIndex) {
+             const fareData = fareMatrix[line];
+             const stationCount = Math.abs(toIndex - fromIndex);
+
+            if (line === "edsacarousel") {
+        // Step fare: first 5 stations are base fare
+             if (stationCount <= 5) {
+            return fareData.baseFare; // ₱15
+            } else {
+            // For stations beyond 5, add perStation for extra stations
+            return Math.round(fareData.baseFare + ((stationCount - 5) * fareData.perStation));
+            }
+         } else {
+        // Linear fare for other lines
+        return Math.round(fareData.baseFare + (stationCount * fareData.perStation));
+    }
+}
             
             // Calculate different fare types
-            const singleJourneyFare = Math.round(baseFare + (stationCount * perStation));
+            //const singleJourneyFare = Math.round(baseFare + (stationCount * perStation));
+            // New:
+            const singleJourneyFare = calculateFareForLine(line, fromIndex, toIndex);
             const beepCardFare = Math.round((baseFare + (stationCount * perStation)) * 0.95); // 5% discount estimate
             const studentFare = Math.round(singleJourneyFare * 0.8); // 20% discount
             
@@ -441,7 +461,7 @@
                 </div>
                 
                 <div style="margin-top: 1rem; text-align: right;">
-                    <small>Fares updated: March 2024</small>
+                    <small>Fares updated: March 2026</small>
                 </div>
             `;
             

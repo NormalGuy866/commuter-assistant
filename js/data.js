@@ -68,22 +68,29 @@ const transitData = {
         color: "#ff6600",
         stations: [
             "Monumento",
-            "5th Avenue",
-            "R. Papa",
-            "Abad Santos",
-            "Blumentritt",
-            "Tayuman",
-            "Doroteo Jose",
-            "Carriedo",
-            "Central",
-            "United Nations",
-            "Pedro Gil",
-            "Quirino",
-            "Vito Cruz",
-            "Gil Puyat",
-            "Libertad",
-            "EDSA",
-            "Baclaran"
+            "Bagong Barrio",
+            "Balintawak",
+            "Kaining",
+            "Roosevelt/Munoz",
+            "SM North EDSA",
+            "North Avenue",
+            "Philam",
+            "Quezon Avenue",
+            "Kamuning",
+            "Nepa Q‑Mart",
+            "Main Avenue",
+            "Santolan",
+            "Ortigas",
+            "Guadalupe",
+            "Buendia",
+            "One Ayala Terminal",
+            "Tramo Carousel Station",
+            "Taft Avenue",
+            "Roxas Boulevard",
+            "SM Mall of Asia",
+            "DFA Aseana",
+            "Ayala Malls Manila Bay",
+            "PITX",
         ]
     }
 };
@@ -104,7 +111,7 @@ const fareMatrix = {
     },
     "edsacarousel": {
         baseFare: 15,
-        perStation: 1.00
+        perStation: 2.75
     }
 };
 
@@ -122,8 +129,8 @@ const stationLandmarks = {
 // Transfer points (stations where you can switch lines)
 const transferPoints = {
     "Araneta Center-Cubao": ["MRT-3", "LRT-2"],
-    "Doroteo Jose": ["LRT-1", "LRT-2 (via walk to Recto)"],
-    "EDSA": ["LRT-1", "MRT-3 (via walk to Taft)"],
-    "Recto": ["LRT-2", "LRT-1 (via walk to Doroteo Jose)"],
-    "Taft Avenue": ["MRT-3", "LRT-1 (via walk to EDSA)"]
+    "Doroteo Jose": ["LRT-1", "LRT-2"],
+    "EDSA": ["LRT-1", "MRT-3"],
+    "Recto": ["LRT-2", "LRT-1"],
+    "Taft Avenue": ["MRT-3", "LRT-1"]
 };

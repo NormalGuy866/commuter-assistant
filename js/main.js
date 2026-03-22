@@ -180,13 +180,20 @@ function findTransferRoute(from, to, fromLines, toLines) {
         
         if (connectsFrom && connectsTo) {
             // Found a transfer point
-            const firstLine = fromLines[0];
-            const lastLine = toLines[0];
+            /*const firstLine = fromLines[0];
+            const lastLine = toLines[0];*/
+            const firstLine = fromLines.find(line =>
+    transferPoints[transferPoint].includes(transitData[line].name)
+);
+
+const lastLine = toLines.find(line =>
+    transferPoints[transferPoint].includes(transitData[line].name)
+);
             
             steps = [
                 ...generateDirectRoute(from, transferPoint, firstLine),
                 `🔄 TRANSFER: Alight at ${transferPoint}`,
-                `🚶 Walk to the ${transitData[lastLine].name} platform`,
+                `🚶 Walk to the connecting station (follow signs)`/*${transitData[lastLine].name} platform`*/,
                 ...generateDirectRoute(transferPoint, to, lastLine)
             ];
             
@@ -202,8 +209,14 @@ function findTransferRoute(from, to, fromLines, toLines) {
     // If no transfer found, provide a default message
     if (steps.length === 0) {
         steps = [
+            /*
             `No direct route found. You may need to take a jeepney or taxi between stations.`,
             `From ${from}, take a jeep to a major transfer point like EDSA or Cubao.`
+            */
+           `🚫 No direct train route available.`,
+            `🚉 Go to a major transfer station like Cubao or EDSA.`,
+            `🚌 You may need to take a jeepney or bus for part of the trip.`,
+            `💡 Ask station staff for the fastest route.`
         ];
         fare = 0;
         warning = "⚠️ This route requires multiple transfers. Consider asking station staff for help.";
